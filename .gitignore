@@ -1,0 +1,61 @@
+# Compiled object files
+*.o
+*.obj
+*.lo
+*.la
+*.al
+*.libs
+
+# Libraries
+*.so
+*.dylib
+*.dll
+*.lib
+*.a
+
+# Executables
+*.exe
+*.out
+*.app
+*.elf
+*.bin
+
+# Build directories
+/build/
+/bin/
+/obj/
+/Debug/
+/Release/
+/dist/
+/cmake-build-debug/
+/CMakeFiles/
+/CMakeCache.txt
+compile_commands.json
+
+# IDE and editor files
+.vscode/
+.idea/
+*.code-workspace
+*.suo
+*.user
+*.user.*
+*.vcxproj.user
+*.ncb
+*.sdf
+*.opensdf
+*.log
+
+# macOS files
+.DS_Store
+
+# Temporary files
+*.tmp
+*.temp
+*~
+
+# Backup files
+*.bak
+*.swp
+*.swo
+
+assignment.md
