@@ -1,6 +1,17 @@
 #include "ParkingLot.h"
 
-std::optional<int> findSpot(const Vehicle& vehicle);
-bool reserveSpot(int spotId, int vehicleId);
-void releaseSpot(int spotId);
-double occupacyRate() const;
+std::optional<int> ParkingLot::findSpot(const Vehicle& vehicle) {
+
+};
+
+bool ParkingLot::reserveSpot(int spotId, int vehicleId) {
+    
+};
+
+void ParkingLot::releaseSpot(int spotId) {
+
+};
+
+double ParkingLot::occupacyRate() const {
+
+};
