@@ -24,4 +24,5 @@ class Vehicle {
             VehicleState state,
             Ticket* ticket
         ) : tag(tag), type(type), state(state), ticket(ticket) {};
+        VehicleType getType() const { return this->type; };
 };

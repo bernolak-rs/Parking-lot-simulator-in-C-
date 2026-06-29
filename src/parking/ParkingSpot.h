@@ -1,5 +1,4 @@
 #pragma once
-#include "ParkingLot.h"
 #include <cstddef>
 #include <expected>
 #include <optional>
@@ -25,13 +24,12 @@ private:
     bool occupied;
     std::optional<int> vehicleId;
 public:
-    bool isOccupied() { return this->occupied; };
-    std::expected<bool, ParkingError> occupy(int vehicleId) { 
-        if (occupied) return std::unexpected(ParkingError::Occupied);
-        this->vehicleId = vehicleId;
-        this->occupied = true;
-        return true;
-    };
+    ParkingSpot(size_t id, SpotType type)
+        : id(id), type(type), occupied(false), vehicleId(std::nullopt) {};
+    size_t getId() { return this->id; };
+    bool isOccupied() const { return this->occupied; };
+    SpotType getType() const { return this->type; };
+    std::expected<bool, ParkingError> occupy(int vehicleId); 
     void release() { 
         this->occupied = false; 
         this->vehicleId = std::nullopt;
