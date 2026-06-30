@@ -1,0 +1,14 @@
+time_min,event,vehicle_id,tag,vehicle_type,spot_index
+0,arrival,1,BA123AA,Car,
+2,arrival,2,BA456BB,Motorcycle,
+5,arrival,3,BA789CC,ElectricCar,
+8,arrival,4,BA111DD,DisabledDriver,
+10,arrival,5,BA222EE,Van,
+15,departure,1,BA123AA,Car,0
+18,arrival,6,BA333FF,Car,
+22,departure,2,BA456BB,Motorcycle,10
+25,arrival,7,BA444GG,Motorcycle,
+30,departure,3,BA789CC,ElectricCar,13
+35,arrival,8,BA555HH,ElectricCar,
+40,departure,4,BA111DD,DisabledDriver,16
+45,departure,5,BA222EE,Van,18

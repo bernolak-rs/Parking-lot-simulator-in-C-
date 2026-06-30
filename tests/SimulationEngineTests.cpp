@@ -1,4 +1,4 @@
-#include "../src/SimulationEngine/SimulationEngine.h"
+#include "../src/simulation/SimulationEngine.h"
 #include "../src/barriers/Barrier.h"
 #include "../src/parking/ParkingLot.h"
 #include "../src/ticketing/TicketMachine.h"
