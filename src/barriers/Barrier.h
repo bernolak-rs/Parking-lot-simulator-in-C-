@@ -9,8 +9,12 @@ enum class BarrierState {
 };
 
 class Barrier {
+    private:
+        BarrierState state;
+
     public:
-        void requestOpen();
-        void close();
-        BarrierState getState() const;
+        Barrier() : state(BarrierState::Closed) {};
+        bool requestOpen();
+        bool close();
+        BarrierState getState() const { return this->state; };
 };

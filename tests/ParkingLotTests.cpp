@@ -9,82 +9,82 @@
 #include <sstream>
 
 namespace {
-Vehicle makeVehicle(VehicleType type) {
-    return Vehicle("TEST", type, VehicleState::Arriving, nullptr);
-}
+    Vehicle makeVehicle(VehicleType type) {
+        return Vehicle("TEST", type, VehicleState::Arriving, nullptr);
+    }
 
-void assertClose(double actual, double expected) {
-    assert(std::fabs(actual - expected) < 0.000001);
-}
+    void assertClose(double actual, double expected) {
+        assert(std::fabs(actual - expected) < 0.000001);
+    }
 
-void testFindSpotReturnsMatchingSpotTypes() {
-    ParkingLot lot(1, 1, 1, 1, 1);
+    void testParkVehicleReturnsMatchingSpotTypes() {
+        ParkingLot lot(1, 1, 1, 1, 1);
 
-    assert(lot.findSpot(makeVehicle(VehicleType::Car)) == std::optional<int>(0));
-    assert(lot.findSpot(makeVehicle(VehicleType::Motorcycle)) == std::optional<int>(1));
-    assert(lot.findSpot(makeVehicle(VehicleType::ElectricCar)) == std::optional<int>(2));
-    assert(lot.findSpot(makeVehicle(VehicleType::DisabledDriver)) == std::optional<int>(3));
-    assert(lot.findSpot(makeVehicle(VehicleType::Van)) == std::optional<int>(4));
-}
+        assert(lot.parkVehicle(makeVehicle(VehicleType::Car), 100) == std::optional<int>(0));
+        assert(lot.parkVehicle(makeVehicle(VehicleType::Motorcycle), 101) == std::optional<int>(1));
+        assert(lot.parkVehicle(makeVehicle(VehicleType::ElectricCar), 102) == std::optional<int>(2));
+        assert(lot.parkVehicle(makeVehicle(VehicleType::DisabledDriver), 103) == std::optional<int>(3));
+        assert(lot.parkVehicle(makeVehicle(VehicleType::Van), 104) == std::optional<int>(4));
+        assertClose(lot.occupancyRate(), 1.0);
+    }
 
-void testReserveMakesSpotUnavailable() {
-    ParkingLot lot(1, 0, 0, 0, 0);
-    auto car = makeVehicle(VehicleType::Car);
+    void testParkVehicleMakesSpotUnavailable() {
+        ParkingLot lot(1, 0, 0, 0, 0);
+        auto car = makeVehicle(VehicleType::Car);
 
-    auto spotIndex = lot.findSpot(car);
-    assert(spotIndex.has_value());
-    assert(lot.reserveSpot(spotIndex.value(), 100));
+        auto spotIndex = lot.parkVehicle(car, 100);
+        assert(spotIndex.has_value());
 
-    assert(!lot.findSpot(car).has_value());
-    assertClose(lot.occupacyRate(), 1.0);
-}
+        assert(!lot.parkVehicle(car, 101).has_value());
+        assertClose(lot.occupancyRate(), 1.0);
+    }
 
-void testReleaseMakesSpotAvailableAgain() {
-    ParkingLot lot(1, 0, 0, 0, 0);
-    auto car = makeVehicle(VehicleType::Car);
+    void testReleaseMakesSpotAvailableAgain() {
+        ParkingLot lot(1, 0, 0, 0, 0);
+        auto car = makeVehicle(VehicleType::Car);
 
-    auto spotIndex = lot.findSpot(car);
-    assert(spotIndex.has_value());
-    assert(lot.reserveSpot(spotIndex.value(), 100));
+        auto spotIndex = lot.parkVehicle(car, 100);
+        assert(spotIndex.has_value());
 
-    lot.releaseSpot(spotIndex.value());
+        lot.releaseSpot(spotIndex.value());
 
-    assert(lot.findSpot(car) == spotIndex);
-    assertClose(lot.occupacyRate(), 0.0);
-}
+        assert(lot.parkVehicle(car, 101) == spotIndex);
+        lot.releaseSpot(spotIndex.value());
+        assertClose(lot.occupancyRate(), 0.0);
+    }
 
-void testReserveOccupiedSpotFails() {
-    ParkingLot lot(1, 0, 0, 0, 0);
-    auto car = makeVehicle(VehicleType::Car);
+    void testReleaseAlreadyEmptySpotDoesNotChangeOccupancy() {
+        ParkingLot lot(1, 0, 0, 0, 0);
+        auto car = makeVehicle(VehicleType::Car);
 
-    auto spotIndex = lot.findSpot(car);
-    assert(spotIndex.has_value());
+        auto spotIndex = lot.parkVehicle(car, 100);
+        assert(spotIndex.has_value());
+        lot.releaseSpot(spotIndex.value());
 
-    assert(lot.reserveSpot(spotIndex.value(), 100));
+        std::ostringstream errorOutput;
+        auto* originalErrorBuffer = std::cerr.rdbuf(errorOutput.rdbuf());
+        lot.releaseSpot(spotIndex.value());
+        std::cerr.rdbuf(originalErrorBuffer);
 
-    std::ostringstream errorOutput;
-    auto* originalErrorBuffer = std::cerr.rdbuf(errorOutput.rdbuf());
-    assert(!lot.reserveSpot(spotIndex.value(), 200));
-    std::cerr.rdbuf(originalErrorBuffer);
+        assertClose(lot.occupancyRate(), 0.0);
+    }
 
-    assertClose(lot.occupacyRate(), 1.0);
-}
+    void testUnavailableTypeReturnsNullopt() {
+        ParkingLot lot(1, 0, 0, 0, 0);
 
-void testUnavailableTypeReturnsNullopt() {
-    ParkingLot lot(1, 0, 0, 0, 0);
-
-    assert(!lot.findSpot(makeVehicle(VehicleType::Motorcycle)).has_value());
-    assert(!lot.findSpot(makeVehicle(VehicleType::ElectricCar)).has_value());
-    assert(!lot.findSpot(makeVehicle(VehicleType::DisabledDriver)).has_value());
-    assert(!lot.findSpot(makeVehicle(VehicleType::Van)).has_value());
-}
+        assert(!lot.parkVehicle(makeVehicle(VehicleType::Motorcycle), 100).has_value());
+        assert(!lot.parkVehicle(makeVehicle(VehicleType::ElectricCar), 101).has_value());
+        assert(!lot.parkVehicle(makeVehicle(VehicleType::DisabledDriver), 102).has_value());
+        assert(!lot.parkVehicle(makeVehicle(VehicleType::Van), 103).has_value());
+        assertClose(lot.occupancyRate(), 0.0);
+    }
 }
 
 int main() {
-    testFindSpotReturnsMatchingSpotTypes();
-    testReserveMakesSpotUnavailable();
+    testParkVehicleReturnsMatchingSpotTypes();
+    testParkVehicleMakesSpotUnavailable();
     testReleaseMakesSpotAvailableAgain();
-    testReserveOccupiedSpotFails();
+    testReleaseAlreadyEmptySpotDoesNotChangeOccupancy();
     testUnavailableTypeReturnsNullopt();
 
     std::cout << "ParkingLotTests passed\n";

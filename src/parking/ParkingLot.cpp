@@ -35,6 +35,19 @@ ParkingLot::ParkingLot(size_t standardSpots, size_t motorcycleSpots,
     }
 };
 
+std::optional<int> ParkingLot::parkVehicle(const Vehicle& vehicle, int vehicleId) {
+    auto spotIndex = findSpot(vehicle);
+
+    if (!spotIndex.has_value()) {
+        return std::nullopt;
+    }
+    if (!reserveSpot(spotIndex.value(), vehicleId)) {
+        return std::nullopt;
+    }
+
+    return spotIndex;
+};
+
 std::optional<int> ParkingLot::findSpot(const Vehicle& vehicle) {
     SpotType spotType;
 
@@ -60,9 +73,9 @@ std::optional<int> ParkingLot::findSpot(const Vehicle& vehicle) {
     auto& queue = availableSpots.at(spotType);
 
     while (!queue.empty()) {
-        size_t index = queue.front();
+        int index = queue.front();
 
-        if (index < spots.size() &&
+        if (index >= 0 && index < static_cast<int>(spots.size()) &&
             !spots.at(index).isOccupied()) {
             return index;
         }
@@ -92,26 +105,27 @@ bool ParkingLot::reserveSpot(int spotIndex, int vehicleId) {
     return true;
 };
 
-void ParkingLot::releaseSpot(int spotIndex) {
-    if (spotIndex >= this->spots.size() || spotIndex < 0) {
+bool ParkingLot::releaseSpot(int spotIndex) {
+    if (spotIndex < 0 || spotIndex >= static_cast<int>(this->spots.size())) {
         std::cerr << "Spot index " << spotIndex << " is out of bounds.\n";
-        return;
+        return false;
     }
     auto& spot = this->spots.at(spotIndex);
 
     if (!spot.isOccupied()) {
         std::cerr << "Spot " << spotIndex << " is already empty\n";
-        return;
+        return false;
     }
 
     SpotType spotType = spot.getType();
     spot.release();
     this->availableSpots.at(spotType).push(spotIndex);
     --this->size;
+    return true;
 };
 
 /** Return occupacy of parking lot 0-1 */
-double ParkingLot::occupacyRate() const {
+double ParkingLot::occupancyRate() const {
     return static_cast<double>(this->size) 
             / static_cast<double>(this->capacity);
 };

@@ -15,13 +15,17 @@ class ParkingLot {
         std::vector<ParkingSpot> spots;
         std::unordered_map<SpotType, std::queue<int>> availableSpots;
 
+        void addSpot(SpotType type);
+        std::optional<int> findSpot(const Vehicle& vehicle);
+        bool reserveSpot(int spotIndex, int vehicleId);
+        
     public:
         ParkingLot(size_t standardSpots, size_t motorcycleSpots,
            size_t electricSpots, size_t disabledSpots,
            size_t largeSpots);
-        std::optional<int> findSpot(const Vehicle& vehicle);
-        bool reserveSpot(int spotIndex, int vehicleId);
-        void releaseSpot(int spotIndex);
-        double occupacyRate() const;
-        void addSpot(SpotType type);
+        bool releaseSpot(int spotIndex);
+        double occupancyRate() const;
+        std::optional<int> parkVehicle(const Vehicle& vehicle, int vehicleId);
+        size_t getCapacity() const { return capacity; }
+        size_t getOccupiedCount() const { return size; }
 };
